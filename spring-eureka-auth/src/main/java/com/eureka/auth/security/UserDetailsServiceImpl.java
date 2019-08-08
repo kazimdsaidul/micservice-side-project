@@ -25,7 +25,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	AppUserRepository mAppUserRepository;
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+	public UserDetails loadUserByUsername(String username) {
 
 		Iterable<AppUser> findAll = mAppUserRepository.findAll();
 
