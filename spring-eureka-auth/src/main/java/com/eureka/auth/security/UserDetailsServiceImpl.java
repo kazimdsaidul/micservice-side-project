@@ -34,7 +34,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 			if (appUser.getUsername().equals(username)) {
 
-				System.err.println("user found");
+				// System.err.println("user found");
 
 				// Remember that Spring needs roles to be in this format: "ROLE_" + userRole
 				// (i.e. "ROLE_ADMIN")
@@ -46,11 +46,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 				// The "User" class is provided by Spring and represents a model class for user
 				// to be returned by UserDetailsService
 				// And used by auth manager to verify and check user authentication.
-				return new User(appUser.getUsername(), appUser.getPassword(), grantedAuthorities);
+
+				return new User(appUser.getUsername(), encoder.encode(appUser.getPassword()), grantedAuthorities);
 			}
 
 		}
-		System.err.println("user not found found");
+		// System.err.println("user not found found");
 
 		throw new UsernameNotFoundException("Username: " + username + " not found");
 
