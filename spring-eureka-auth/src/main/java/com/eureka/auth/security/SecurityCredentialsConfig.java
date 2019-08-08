@@ -13,7 +13,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import com.eureka.auth.model.AuthenticationResponse;
 import com.eureka.common.security.JwtConfig;
+import com.google.gson.Gson;
 
 @EnableWebSecurity // Enable security config. This annotation denotes config for spring security.
 public class SecurityCredentialsConfig extends WebSecurityConfigurerAdapter {
@@ -31,8 +33,21 @@ public class SecurityCredentialsConfig extends WebSecurityConfigurerAdapter {
 				// state.
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 //	            // handle an authorized attempts 
-				.exceptionHandling()
-				.authenticationEntryPoint((req, rsp, e) -> rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED)).and()
+				.exceptionHandling().authenticationEntryPoint((req, rsp, e) -> {
+					rsp.setContentType("application/json");
+					rsp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+					AuthenticationResponse auth1 = new AuthenticationResponse();
+					auth1.setStatus(401L);
+					auth1.setMessage("Invalid username or password");
+
+					String json = new Gson().toJson(auth1);
+					rsp.setContentType("application/json");
+					rsp.setCharacterEncoding("UTF-8");
+					rsp.getWriter().write(json);
+
+					rsp.getOutputStream().println("{ \"error\": \"" + "TEST" + "\" }");
+				}).and()
 				// Add a filter to validate user credentials and add token in the response
 				// header
 
